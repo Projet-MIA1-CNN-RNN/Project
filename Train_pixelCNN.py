@@ -47,7 +47,7 @@ model = PixelCNN()
 # Hyperparameters
 learning_rate = 0.01
 batch_size = 2**10
-epochs = 2
+epochs = 1
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.RMSprop(model.parameters())
 
@@ -55,7 +55,6 @@ def train_loop(dataloader, model, loss_fn, optimizer):
 	size = len(dataloader.dataset)
 	for batch, (X, y) in enumerate(dataloader):
 		target = Variable(X[:,0,:,:]*255)
-		print(target.size())
 		X = X.to(device)
 		target = target.to(device)
 		# Compute prediction and loss
