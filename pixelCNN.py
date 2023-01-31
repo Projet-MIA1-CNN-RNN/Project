@@ -18,7 +18,7 @@ print(device)
 
 class MaskedConv2D(nn.Conv2d):
 	def __init__(self,mask_type, *args, **kwargs):
-		super(MaskedConv2D, self).__init__()
+		super(MaskedConv2D, self).__init__(*args, **kwargs)
 		self.mask_type = mask_type
 		assert mask_type in ['A', 'B'], "Unknown Mask Type"
 		self.register_buffer('mask', self.weight.data.clone())
@@ -39,7 +39,7 @@ class MaskedConv2D(nn.Conv2d):
 
 
 class PixelCNN(nn.Module):
-	def __init__(self, nb_layer_block=8, channels=64, device=None):
+	def __init__(self, nb_layer_block=12, channels=64, device=None):
 		super(PixelCNN, self).__init__()
 		self.nb_block = nb_layer_block
 		self.channels = channels
@@ -77,3 +77,5 @@ class PixelCNN(nn.Module):
 			x = residual_block(x)
 		x = self.end(x)
 		return x
+
+model = PixelCNN()
