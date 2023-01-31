@@ -47,27 +47,27 @@ class PixelCNN(nn.Module):
 		self.device = device
 		#first convolution (cf TABLE 1)
 		self.ConvA = nn.Sequential(
-			MaskedConv2D('A',1, 2*self.channels, kernel_size=7, bias=False),
+			MaskedConv2D('A',1, 2*self.channels, kernel_size=7,padding="same", bias=False),
 			nn.ReLU(True)
 		)
 		self.test = nn.Conv2d(2*self.channels,self.channels, kernel_size = 1, bias=False)
 		self.test2 = MaskedConv2D('B',self.channels,self.channels, kernel_size = 3,padding="same", bias=False)
 		#Residual blocks for PixelCNN (figure 5)
 		self.multiple_blocks = nn.Sequential(
-			nn.Conv2d(2*self.channels, self.channels, kernel_size = 1, bias=False),
+			nn.Conv2d(2*self.channels, self.channels, kernel_size = 1,padding='same', bias=False),
 			nn.ReLU(True),
 			MaskedConv2D('B',self.channels,self.channels, kernel_size = 3,padding='same', bias=False),
 			nn.ReLU(True),
-			nn.Conv2d(self.channels,2*self.channels, kernel_size = 1, bias=False),
+			nn.Conv2d(self.channels,2*self.channels, kernel_size = 1,padding='same', bias=False),
 			nn.ReLU(True)
 		)
 		#finalisation
 		self.end = nn.Sequential(
 			nn.ReLU(True),
-			MaskedConv2D('B',2*self.channels, 2 * self.channels, kernel_size = 1, bias=False),
+			MaskedConv2D('B',2*self.channels, 2 * self.channels, padding ='same',kernel_size = 1, bias=False),
 			nn.ReLU(True),
-			MaskedConv2D('B',2* self.channels,2 * self.channels, kernel_size = 1, bias=False),
-			nn.Conv2d( 2 * self.channels, 256, 1)
+			MaskedConv2D('B',2* self.channels,2 * self.channels,padding='same', kernel_size = 1, bias=False),
+			nn.Sigmoid()
 		)
 
 	def residual_block(self, x):
@@ -77,6 +77,7 @@ class PixelCNN(nn.Module):
 		x = self.ConvA(x)
 		for i in range(self.nb_block):
 			x = self.residual_block(x)
+		print(x.size())
 		x = self.end(x)
 		return x
 

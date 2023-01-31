@@ -54,16 +54,18 @@ optimizer = torch.optim.RMSprop(model.parameters())
 def train_loop(dataloader, model, loss_fn, optimizer):
 	size = len(dataloader.dataset)
 	for batch, (X, y) in enumerate(dataloader):
-		target = Variable(X[:,0,:,:]*255).long()
+		target = Variable(X[:,0,:,:]*255)
+		print(target.size())
 		X = X.to(device)
 		target = target.to(device)
 		# Compute prediction and loss
 		pred = model(X)
+		pred = pred[:,-1,:,:]
 		loss = loss_fn(pred,target)
 
 		# Backpropagation (always in three steps)
 		optimizer.zero_grad() # a toujours mettre pour pas accumuler les gradients
-		loss.mean().backward()
+		loss.backward()
 		optimizer.step()
 
 		if batch % 100 == 0:
