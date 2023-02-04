@@ -45,6 +45,7 @@ class PixelCNN(nn.Module):
 		self.channels = channels
 		self.layers = {}
 		self.device = device
+		self.data = input("Veuillez entrer le type de données voulus: tapez mnist pour MNIST ou cifar pour CIFAR10").lower()
 		#first convolution (cf TABLE 1)
 		self.ConvA = nn.Sequential(
 			MaskedConv2D('A',1, 2*self.channels, kernel_size=7,padding="same", bias=False),
@@ -60,12 +61,13 @@ class PixelCNN(nn.Module):
 			nn.ReLU(True)
 		)
 		#finalisation
+		self.mnist = nn.Sigmoid()
+		self.cifar = nn.Softmax()
 		self.end = nn.Sequential(
 			nn.ReLU(True),
 			MaskedConv2D('B',2*self.channels, 2 * self.channels, padding ='same',kernel_size = 1, bias=False),
 			nn.ReLU(True),
 			MaskedConv2D('B',2* self.channels,2 * self.channels,padding='same', kernel_size = 1, bias=False),
-			nn.Sigmoid()
 		)
 
 	def residual_block(self, x):
@@ -76,6 +78,10 @@ class PixelCNN(nn.Module):
 		for i in range(self.nb_block):
 			x = self.residual_block(x)
 		x = self.end(x)
+		if self.data =="mnist":
+			x = self.mnist(x)
+		elif self.data =="cifar":
+			x = self.cifar(x)
+		else:
+			self.data = input("Veuillez entrer mnist ou cifar").lower()
 		return x
-
-model = PixelCNN()
