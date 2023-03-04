@@ -35,53 +35,64 @@ class MaskedConv2D(nn.Conv2d):
 		self.weight.data*=self.mask
 		return super(MaskedConv2D, self).forward(x)
 
-
-
+	
 
 class PixelCNN(nn.Module):
-	def __init__(self, nb_layer_block=12, channels=64, device=None):
-		super(PixelCNN, self).__init__()
-		self.nb_block = nb_layer_block
-		self.channels = channels
-		self.layers = {}
-		self.device = device
-		self.data = input("Veuillez entrer le type de données voulus: tapez mnist pour MNIST ou cifar pour CIFAR10").lower()
-		#first convolution (cf TABLE 1)
-		self.ConvA = nn.Sequential(
-			MaskedConv2D('A',1, 2*self.channels, kernel_size=7,padding="same", bias=False),
-			nn.ReLU(True)
-		)
-		#Residual blocks for PixelCNN (figure 5)
-		self.multiple_blocks = nn.Sequential(
-			nn.Conv2d(2*self.channels, self.channels, kernel_size = 1,padding='same', bias=False),
-			nn.ReLU(True),
-			MaskedConv2D('B',self.channels,self.channels, kernel_size = 3,padding='same', bias=False),
-			nn.ReLU(True),
-			nn.Conv2d(self.channels,2*self.channels, kernel_size = 1,padding='same', bias=False),
-			nn.ReLU(True)
-		)
-		#finalisation
-		self.mnist = nn.Sigmoid()
-		self.cifar = nn.Softmax()
-		self.end = nn.Sequential(
-			nn.ReLU(True),
-			MaskedConv2D('B',2*self.channels, 2 * self.channels, padding ='same',kernel_size = 1, bias=False),
-			nn.ReLU(True),
-			MaskedConv2D('B',2* self.channels,2 * self.channels,padding='same', kernel_size = 1, bias=False),
-		)
+    def __init__(self, nb_layer_block=12, channels=32, device=None):
+        super(PixelCNN, self).__init__()
+        self.nb_block = nb_layer_block
+        self.channels = channels
+        self.layers = {}
+        self.device = device
+        self.data = input("Veuillez entrer le type de données voulus: tapez mnist pour MNIST ou cifar pour CIFAR10").lower()
+        #first convolution (cf TABLE 1)
+        self.ConvA = nn.Sequential(
+            MaskedConv2D('A',1, 2*self.channels, kernel_size=7,padding="same", bias=False),
+            nn.ReLU(True)
+        )
+        #Residual blocks for PixelCNN (figure 5)
+        self.multiple_blocks = nn.Sequential(
+            nn.Conv2d(2*self.channels, self.channels, kernel_size = 1,padding='same', bias=True),
+            nn.ReLU(True),
+            MaskedConv2D('B',self.channels,self.channels, kernel_size = 3,padding='same', bias=False),
+            nn.ReLU(True),
+            nn.Conv2d(self.channels,2*self.channels, kernel_size = 1,padding='same', bias=True),
+            nn.ReLU(True)
+        )
+        #finalisation
+        self.end_cifar = nn.Sequential(
+            nn.ReLU(True),
+            MaskedConv2D('B',2*self.channels, 2 * self.channels, padding ='same',kernel_size = 1, bias=False),
+            nn.ReLU(True),
+            MaskedConv2D('B',2* self.channels,2 * self.channels,padding='same', kernel_size = 1, bias=False),
+            nn.Softmax()
+        )
+        self.end_mnist = nn.Sequential(
+            MaskedConv2D('B',2*self.channels, 2 * self.channels, padding ='same',kernel_size = 1, bias=False),
+            nn.ReLU(True),
+            MaskedConv2D('B',2* self.channels,2*self.channels,padding='same', kernel_size = 1, bias=False),
+            #ATTENTION A LA DIMENSION DE SORTIE ICI !!!!!
+            nn.ReLU(True),
+            nn.Conv2d(2*self.channels,1,padding='same',kernel_size = 1, bias=True),
+        )
 
-	def residual_block(self, x):
-		return (x + self.multiple_blocks(x))
-	
-	def forward(self,x,**kwargs):
-		x = self.ConvA(x)
-		for i in range(self.nb_block):
-			x = self.residual_block(x)
-		x = self.end(x)
-		if self.data =="mnist":
-			x = self.mnist(x)
-		elif self.data =="cifar":
-			x = self.cifar(x)
-		else:
-			self.data = input("Veuillez entrer mnist ou cifar").lower()
-		return x
+    def residual_block(self, x):
+        return (x + self.multiple_blocks(x))
+
+    def forward(self,x,**kwargs):
+        x = self.ConvA(x)
+
+        for i in range(self.nb_block):
+            x = self.residual_block(x)
+
+        if self.data =="mnist":
+            x = self.end_mnist(x)
+
+        elif self.data =="cifar":
+            x = self.end_cifar(x)
+
+        else:
+            self.data = input("Veuillez entrer mnist ou cifar").lower()
+
+        return x
+
