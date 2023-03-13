@@ -15,6 +15,10 @@ print(device)
 
 class MaskedConv2D(nn.Conv2d):
     def __init__(self,mask_type, *args, **kwargs):
+        """ This function creates a 2d masked convolutions with a type A or type B mask
+
+        : param string mask_type : the type of the mask ( 'A' or 'B')
+        """
         super(MaskedConv2D, self).__init__(*args, **kwargs)
         self.mask_type = mask_type
         assert mask_type in ['A', 'B'], "Unknown Mask Type"
@@ -29,5 +33,7 @@ class MaskedConv2D(nn.Conv2d):
             self.mask[:,:,height//2+1:,:] = 0
 
     def forward(self, x):
+        """ Forward function for the masked convolution
+        """
         self.weight.data*=self.mask
         return super(MaskedConv2D, self).forward(x)

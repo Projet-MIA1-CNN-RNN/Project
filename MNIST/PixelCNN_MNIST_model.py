@@ -10,6 +10,12 @@ from MaskedConv import MaskedConv2D,device
 class PixelCNN_MNIST(nn.Module):
     def __init__(self,in_channels=1, out_channels=1, nb_layer_block=12, 
                  h_channels=32, device=None):
+        """Defines the architecture of the PixelCNN algorithm for the MNIST database
+        :param int in_channel: number of channel in the input images (set to 1 for MNIST images)
+        :param int out_channel: number of channel in the output images (set to 1 for MNIST images)
+        :param int nb_layer_block: number of layers of residual block used in the network
+        :param int h_channels: number of feature map to use during the convolutions in the processing.This number will often be doubled during calculation.
+        """
         super(PixelCNN_MNIST, self).__init__()
         
         torch.cuda.empty_cache()
@@ -44,6 +50,12 @@ class PixelCNN_MNIST(nn.Module):
         )
 
     def residual_block(self, x):
+        """Defines the residual connection in the residual blocks
+        :param tensor x: tensor we are processing through the residual block
+
+        :returns: the sum of x and what the residual block calculated for x
+        :rtype: tensor
+        """
         x = x + self.multiple_blocks(x)
         return (x)
 
