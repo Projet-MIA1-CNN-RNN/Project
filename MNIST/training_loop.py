@@ -5,11 +5,12 @@ from torch.autograd import Variable
 
 def train_loop(dataloader, model, loss_fn, optimizer,best_loss):
     """Function used to train a network. Performs one epoch.
-    :param tensor dataloader: data that will be used to train the network
-    :param torch model: the architecture for the model to be trained
-    :param function loss_fn: the loss function chosen for the training
-    :param torch.optim optimizer: the optimizer chosen for the training
-    :param float best_loss: the minimal loss recorded during training
+    
+    :parameter dataloader: data that will be used to train the network.
+    :param model: the architecture for the model to be trained.
+    :param loss_fn: the loss function chosen for the training.
+    :param optimizer: the optimizer chosen for the training.
+    :param best_loss: the minimal loss recorded during training.
 
     :returns: two elements : the mean loss during the whole epoch and the minimum found
     :rtype: tuple of two elements

@@ -9,13 +9,13 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import matplotlib.image as mpimg
 from PixelCNN_MNIST_model import PixelCNN_MNIST,device
-import os
 from PIL import Image
 
 
 def test_MNIST(model, weight_path ,no_images ,n_col ,n_row, user=True ):
 
     """Function used to generate new images with a trained network.
+    
     :param tensor dataloader: data that will be used to train the network
     :param torch model:  the architecture of the model we use
     :param path weight_path: relative path to the weight for the desired network to use

@@ -14,11 +14,11 @@ print(device)
 
 
 class MaskedConv2D(nn.Conv2d):
-    def __init__(self,mask_type, *args, **kwargs):
-        """ This function creates a 2d masked convolutions with a type A or type B mask
+    """ This class creates a 2d masked convolutions with a type A or type B mask
 
-        : param string mask_type : the type of the mask ( 'A' or 'B')
+        :param string mask_type: the type of the mask ( 'A' or 'B')
         """
+    def __init__(self,mask_type, *args, **kwargs):
         super(MaskedConv2D, self).__init__(*args, **kwargs)
         self.mask_type = mask_type
         assert mask_type in ['A', 'B'], "Unknown Mask Type"
