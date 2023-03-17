@@ -14,7 +14,7 @@ selecting_model = st.container()
 with header:
     st.title("PixelCNN application")
     st.markdown('''This application is here to illustrate our implementation of PixelCNN, a deep learning algorithm created for image generation an image completion. \n
-For more detail about the algorithms and the papers related, you can read our full report on the topic''')
+For more detail about the algorithm and the papers related, you can read our full report on the topic''')
     
 with selecting_model:
 
