@@ -1,4 +1,4 @@
-# Projet
+# Project
 Repository of our implementation of PixelCNN for binarized MNIST
 
 You will also find your full report about the two articles we studied.
