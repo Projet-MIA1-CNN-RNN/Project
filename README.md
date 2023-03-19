@@ -10,6 +10,4 @@ You can then train it and use it to generate new images based on binarized MNIST
 You can also use a pretrained model if you don't have time to train your own model.
 
 
-Here are the module needed for python if you want to execute our programs:
-
-streamlit , numpy , matplotlib.pyplot, torch, torchvision, matplotlib.image
+Here are the module needed for python if you want to execute our programs: streamlit , numpy , matplotlib.pyplot, torch, torchvision, matplotlib.image
